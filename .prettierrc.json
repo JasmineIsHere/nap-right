@@ -1,0 +1,11 @@
+{
+  "plugins": ["@markw65/prettier-plugin-monkeyc", "@prettier/plugin-xml"],
+  "tabWidth": 4,
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": ["*.json", "*.md", "*.xml"],
+      "options": { "tabWidth": 2 }
+    }
+  ]
+}

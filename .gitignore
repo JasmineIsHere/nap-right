@@ -1,0 +1,8 @@
+.local/
+node_modules/
+bin/
+*.prg
+*.prg.debug.xml
+*.der
+*.pem
+.DS_Store
