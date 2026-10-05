@@ -1,0 +1,13 @@
+<iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="1">
+  <iq:application
+    id="c4bc9d97b87a4f689d8277df941d799a"
+    type="watch-app"
+    name="@Strings.AppName"
+    entry="ProbeTestApp"
+    minSdkVersion="4.2.0"
+  >
+    <iq:products><iq:product id="vivoactive5" /></iq:products>
+    <iq:permissions />
+    <iq:languages><iq:language>eng</iq:language></iq:languages>
+  </iq:application>
+</iq:manifest>
