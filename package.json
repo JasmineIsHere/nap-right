@@ -2,12 +2,15 @@
   "name": "napright-tooling",
   "private": true,
   "scripts": {
-    "format": "prettier --write package.json package-lock.json .prettierrc.json \"docs/**/*.md\" \"probe/**/*.mc\" \"probe/**/*.xml\" --no-error-on-unmatched-pattern",
-    "format:check": "prettier --check package.json package-lock.json .prettierrc.json \"docs/**/*.md\" \"probe/**/*.mc\" \"probe/**/*.xml\" --no-error-on-unmatched-pattern"
+    "format": "prettier --write package.json package-lock.json .prettierrc.json \"docs/**/*.md\" \"probe/**/*.mc\" \"probe/**/*.xml\" \"tools/**/*.js\" --no-error-on-unmatched-pattern",
+    "format:check": "prettier --check package.json package-lock.json .prettierrc.json \"docs/**/*.md\" \"probe/**/*.mc\" \"probe/**/*.xml\" \"tools/**/*.js\" --no-error-on-unmatched-pattern",
+    "test:decoder": "node --test tools/decoder.test.js",
+    "test": "node tools/build.js"
   },
   "devDependencies": {
     "@markw65/prettier-plugin-monkeyc": "1.0.69",
     "@prettier/plugin-xml": "3.4.2",
     "prettier": "3.9.9"
-  }
+  },
+  "type": "module"
 }

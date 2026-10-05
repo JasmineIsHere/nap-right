@@ -36,6 +36,7 @@ class ProbeSession {
             "rrMissingCallbacks",
             "rrRejected",
             "droppedRecords",
+            "rrGaps",
         ];
         for (var i = 0; i < names.size(); i += 1) {
             _stats[names[i]] = 0;
@@ -201,6 +202,17 @@ class ProbeSession {
             }
             append(signal("rr", at, wall, "ms", intervals[i], valid ? "valid" : "rejected"));
         }
+    }
+
+    function rrGap(at, wall) {
+        if (!_running) {
+            return;
+        }
+        _rr = [];
+        _stats["rrGaps"] += 1;
+        var r = record("rr_gap", at, wall);
+        r["reason"] = "callback_gap";
+        append(r);
     }
 
     private function rmssd() {
