@@ -339,3 +339,47 @@ function watchMemoryMinimumResetsBetweenSessions(logger) {
     c.stop("cancelled");
     return true;
 }
+
+(:test)
+function watchStartupFailureStagesPersist(logger) {
+    var codes = ["rate_query_error", "hr_start_error", "data_start_error", "timer_start_error"];
+    for (var i = 0; i < codes.size(); i += 1) {
+        var api = new WatchFakeApi();
+        api.failRate = i == 0;
+        api.failHr = i == 1;
+        api.failAllData = i == 2;
+        api.failTimer = i == 3;
+        var c = newWatchTest(logger, api);
+        if (c == null) {
+            return false;
+        }
+        Test.assert(!c.start(2));
+        Test.assert(api.stored.find("E," + codes[i] + "\n") != null);
+        var errors = c.state()["errors"];
+        Test.assertEqual(errors[errors.size() - 1], codes[i]);
+        Test.assert(c.exportLast());
+        Test.assert(api.outputs[0].find("E," + codes[i] + "\n") != null);
+        for (var j = 0; j < codes.size(); j += 1) {
+            if (j != i) {
+                Test.assert(api.stored.find("E," + codes[j] + "\n") == null);
+                Test.assert(api.outputs[0].find("E," + codes[j] + "\n") == null);
+            }
+        }
+        Test.assertEqual(api.vibes, 0);
+        Test.assertEqual(api.timerStops, i == 3 ? 1 : 0);
+        Test.assertEqual(api.hrStops, i == 0 ? 0 : 1);
+        Test.assertEqual(api.unregistrations, i < 2 ? 0 : i == 2 ? 2 : 1);
+    }
+    var successApi = new WatchFakeApi();
+    var success = newWatchTest(logger, successApi);
+    if (success == null) {
+        return false;
+    }
+    Test.assert(success.start(2));
+    success.stop("cancelled");
+    for (var k = 0; k < codes.size(); k += 1) {
+        Test.assert(successApi.stored.find("E," + codes[k] + "\n") == null);
+        Test.assert(successApi.outputs[0].find("E," + codes[k] + "\n") == null);
+    }
+    return true;
+}

@@ -55,14 +55,25 @@ class ProbePlatform {
         owner = c;
     }
     function startSensors() {
-        var maximum = api.maximumRate();
+        var maximum;
+        try {
+            maximum = api.maximumRate();
+        } catch (e) {
+            owner.error("rate_query_error");
+            throw e;
+        }
         if (maximum < 1) {
             owner.error("accel_unavailable");
             throw new Toybox.Lang.Exception();
         }
         owner.rate = maximum < 25 ? maximum : 25;
         hrAttempted = true;
-        api.enableHr(relay.method(:hr));
+        try {
+            api.enableHr(relay.method(:hr));
+        } catch (e) {
+            owner.error("hr_start_error");
+            throw e;
+        }
         dataAttempted = true;
         try {
             api.registerData(relay.method(:data), owner.rate, true);
@@ -77,12 +88,22 @@ class ProbePlatform {
             }
             owner.rrEnabled = false;
             dataAttempted = true;
-            api.registerData(relay.method(:data), owner.rate, false);
+            try {
+                api.registerData(relay.method(:data), owner.rate, false);
+            } catch (retryError) {
+                owner.error("data_start_error");
+                throw retryError;
+            }
         }
     }
     function startTimer() {
         timerAttempted = true;
-        api.startTimer(relay.method(:timer));
+        try {
+            api.startTimer(relay.method(:timer));
+        } catch (e) {
+            owner.error("timer_start_error");
+            throw e;
+        }
     }
     function stopTimer() {
         if (timerAttempted) {

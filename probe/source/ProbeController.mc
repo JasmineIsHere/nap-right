@@ -101,7 +101,7 @@ class ProbeController {
             "," +
             meta[2] +
             "\n";
-        if (!running) {
+        if (!running && errors.size() == 0) {
             error("startup_error");
         }
         consume();

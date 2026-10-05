@@ -11,6 +11,8 @@ class WatchFakeApi {
     var saves = [];
     var outputs = [];
     var failRr = false;
+    var failRate = false;
+    var failHr = false;
     var failAllData = false;
     var failTimer = false;
     var failCleanup = false;
@@ -30,9 +32,15 @@ class WatchFakeApi {
         return wall;
     }
     function maximumRate() {
+        if (failRate) {
+            throw new Lang.Exception();
+        }
         return maxRate;
     }
     function enableHr(callback) {
+        if (failHr) {
+            throw new Lang.Exception();
+        }
         hrCallbacks.add(callback);
         if (startupCallback) {
             callback.invoke(99);
