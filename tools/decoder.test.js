@@ -77,3 +77,40 @@ test("rejects negative normalized times and minute fields but preserves signed s
     assert.deepEqual(decode(signed).preview[0].value, [-1, 2, -3]);
     assert.equal(decode(signed).preview[0].sampleTimestampMs, -1);
 });
+
+function withPreview(kind, quality, value, nativeTimestamp = "_") {
+    const unit = { hr: "bpm", rr: "ms", accel: "millig" }[kind];
+    return report.replace(
+        "P,hr,0,1700000000,valid,bpm,65,_",
+        `P,${kind},0,1700000000,${quality},${unit},${value},${nativeTimestamp}`,
+    );
+}
+for (const kind of ["hr", "rr"]) {
+    test(`rejects nonpositive ${kind} previews marked valid`, () => {
+        for (const value of ["0", "-0", "-1", "-0.5"]) {
+            assert.throws(
+                () => decode(withPreview(kind, "valid", value)),
+                /Nonpositive valid HR or RR/,
+                `${kind}=${value} must not be accepted as valid`,
+            );
+        }
+    });
+}
+test("preserves positive HR/RR, absent values and signed acceleration", () => {
+    for (const kind of ["hr", "rr"]) {
+        for (const value of ["1", "0.5", kind === "hr" ? "65" : "800"]) {
+            const preview = decode(withPreview(kind, "valid", value)).preview[0];
+            assert.equal(preview.kind, kind);
+            assert.equal(preview.value, Number(value));
+            assert.equal(preview.quality, "valid");
+        }
+        for (const quality of ["missing", "rejected"]) {
+            const preview = decode(withPreview(kind, quality, "_")).preview[0];
+            assert.equal(preview.value, null);
+            assert.equal(preview.quality, quality);
+        }
+    }
+    const xyz = decode(withPreview("accel", "valid", "0;-1;2", "-1")).preview[0];
+    assert.deepEqual(xyz.value, [0, -1, 2]);
+    assert.equal(xyz.sampleTimestampMs, -1);
+});

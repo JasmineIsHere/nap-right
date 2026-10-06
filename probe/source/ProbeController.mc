@@ -261,6 +261,9 @@ class ProbeController {
         api.emit(text);
         return true;
     }
+    // TODO: Revisit RMSSD as a sleep-onset hypothesis in later NapRight stages.
+    // It is diagnostic only. Review RR source, freshness and gaps before using
+    // it for detection or timer decisions; empty RR batches can leave stale history.
     function state() {
         var s = session == null ? null : session.snapshot();
         var metrics = api.metrics();

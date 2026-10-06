@@ -65,3 +65,27 @@ all eight Node tests successfully and inspected the 66-test SDK and successful s
 logs. The simulator/builds and hardware trials were not rerun for this documentation-only
 checkpoint. Review gaps include both P2 regression cases and the outstanding hardware gates.
 This checkpoint commit records evidence and debt; it adds no runtime changes.
+
+## User decisions after review — 2026-10-06
+
+Keep RMSSD as a hypothesis for later sleep-onset evaluation. A comment in ProbeController
+records the need to revisit RR source, freshness and gaps before using it for decisions;
+the first P2 remains deferred. The user subsequently authorized fixing the second P2:
+zero/negative HR or RR must not be labelled valid.
+Ignore P3 for now; no documentation repair is planned. Existing findings remain recorded for
+review provenance, with these decisions governing follow-up scope.
+
+## Decoder contract repair — 2026-10-06
+
+The decoder now rejects zero/negative HR/RR preview values marked valid, including negative zero
+and negative fractions. Positive values, missing/rejected nulls, signed XYZ and native timestamps
+retain their prior behavior. This is a computer-side decoder repair; sensor capture policy is
+unchanged. The RMSSD hypothesis comment is retained and P3 remains ignored.
+
+Regression tests were written first and independently approved by `checkpoint_debt_review`.
+The red run had two expected missing-exception failures (HR=0 and RR=0) and eight passes.
+After the fix, all 11 Node tests passed, including the actual 66-minute simulator fixture.
+`npm test` passed all 66 SDK tests and 11 Node tests; signed test/production builds were
+warning-free. `npm run format` and `npm run format:check` passed. Fresh read-only reviewer
+`positive_previews_final_review`: No findings; APPROVE for commit. The reviewer independently
+reran formatting, 11 Node tests and whitespace checking and inspected SDK/build evidence.

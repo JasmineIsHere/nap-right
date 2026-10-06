@@ -101,6 +101,8 @@ export function decode(current, backup = "") {
                 (r[1] === "accel" && v !== null && (v.length !== 3 || v.some((x) => x === null)))
             )
                 throw Error("Invalid preview value");
+            if (r[4] === "valid" && ["hr", "rr"].includes(r[1]) && v <= 0)
+                throw Error("Nonpositive valid HR or RR");
             if (!/^\d+$/.test(r[3])) throw Error("Invalid capture time");
             result.preview.push({
                 kind: r[1],
