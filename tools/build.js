@@ -49,7 +49,7 @@ try {
     const file = build(
         "tests",
         "probe/tests/manifest.xml",
-        ["probe/source", "probe/tests/cases", "probe/tests/support"],
+        ["probe/source", "probe/app", "probe/tests/cases", "probe/tests/support"],
         "probe/tests/resources",
         true,
     );

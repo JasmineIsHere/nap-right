@@ -17,11 +17,20 @@ class GarminApi {
     function maximumRate() {
         return Sensor.getMaxSampleRateForSensorType(:accelerometer);
     }
+    function hrEnableType(kind) {
+        return Sensor.enableSensorType(kind);
+    }
+    function hrDisableType(kind) {
+        return Sensor.disableSensorType(kind);
+    }
+    function hrEvents(listener) {
+        Sensor.enableSensorEvents(listener);
+    }
     function enableHr(callback) {
-        if (!Sensor.enableSensorType(Sensor.SENSOR_HEARTRATE)) {
+        if (!hrEnableType(Sensor.SENSOR_ONBOARD_HEARTRATE)) {
             throw new Lang.Exception();
         }
-        Sensor.enableSensorEvents((new GarminHrBridge(callback)).method(:event));
+        hrEvents((new GarminHrBridge(callback)).method(:event));
     }
     function registerData(callback, rate, rrEnabled) {
         Sensor.registerSensorDataListener((new GarminDataBridge(callback)).method(:event), {
@@ -36,12 +45,12 @@ class GarminApi {
     function disableHr() {
         var failed = false;
         try {
-            Sensor.enableSensorEvents(null);
+            hrEvents(null);
         } catch (e) {
             failed = true;
         }
         try {
-            Sensor.disableSensorType(Sensor.SENSOR_HEARTRATE);
+            hrDisableType(Sensor.SENSOR_ONBOARD_HEARTRATE);
         } catch (e) {
             failed = true;
         }
